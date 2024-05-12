@@ -1,7 +1,3 @@
-//
-// Created by Enrico on 29/03/2024.
-//
-
 #ifndef INTERACTION_DISTANCE_H
 #define INTERACTION_DISTANCE_H
 

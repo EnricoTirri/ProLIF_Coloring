@@ -1,7 +1,3 @@
-//
-// Created by Enrico on 04/04/2024.
-//
-
 #ifndef INTERACTION_INTERACTIONCOLLECTION_HPP
 #define INTERACTION_INTERACTIONCOLLECTION_HPP
 
@@ -13,8 +9,9 @@
 #include <IonicInteraction.hpp>
 #include <MetalInteraction.hpp>
 
-class InteractionCollection{
+class InteractionCollection {
 public:
     static std::vector<std::pair<std::string, Interaction *>> buildList();
 };
+
 #endif //INTERACTION_INTERACTIONCOLLECTION_HPP

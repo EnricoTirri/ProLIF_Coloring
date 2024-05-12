@@ -1,7 +1,3 @@
-//
-// Created by Enrico on 17/04/2024.
-//
-
 #ifndef INTERACTION_DISCRETIZER_HPP
 #define INTERACTION_DISCRETIZER_HPP
 
@@ -62,10 +58,10 @@ public:
 
         /* Generate support-mesh */
         auto mesh = new MoleculeMesh(size_x, size_y, size_z,
-                                       {floor(t_min_x),
-                                        floor(t_min_y),
-                                        floor(t_min_z)},
-                                       scaledPadding);
+                                     {floor(t_min_x),
+                                      floor(t_min_y),
+                                      floor(t_min_z)},
+                                     scaledPadding);
 
         /* Calculate discrete atom size */
         double scaledAtomRadius = atomRadius * GRAIN;
@@ -127,7 +123,8 @@ public:
                 auto py = static_cast<double>(j - mesh.internalDisplacement) / GRAIN + mesh.globalDisplacement.y;
                 for (int k = 0; k < mesh.dim_x; k++) {
                     if (mesh.at(k, j, i)) {
-                        auto px = static_cast<double>(k - mesh.internalDisplacement) / GRAIN + mesh.globalDisplacement.x;
+                        auto px =
+                                static_cast<double>(k - mesh.internalDisplacement) / GRAIN + mesh.globalDisplacement.x;
 
                         /* Get atom position back from mesh reference system */
                         auto *pos = new RDGeom::Point3D(px, py, pz);

@@ -1,7 +1,3 @@
-//
-// Created by Enrico on 03/04/2024.
-//
-
 #ifndef INTERACTION_HYDROPHOBIC_H
 #define INTERACTION_HYDROPHOBIC_H
 

@@ -14,25 +14,23 @@ private:
 public:
     SingleAngleInteraction(const std::string &smart,
                            std::pair<double, double> angle,
-                           double distance
-                           //TODO add distance-to point choice
-                           )
-                           : Interaction(smart),
-                            min_angle(angle.first),
-                            max_angle(angle.second),
-                            distance(distance) {};
+            //TODO add distance-to point choice
+                           double distance) : Interaction(smart),
+                                              min_angle(angle.first),
+                                              max_angle(angle.second),
+                                              distance(distance) {};
 
-    bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh& mask) override {
+    bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &mask) override {
 
         // Get molecule conformer and retrive matches of smart into given molecule
         RDKit::Conformer conformer = molecule->getConformer();
         std::vector<RDKit::MatchVectType> *matches = Interaction::findMatch(molecule);
 
-        if(matches->empty()) return false;
+        if (matches->empty()) return false;
 
 
         bool found = false;
-        for(RDKit::MatchVectType match : *matches) {
+        for (RDKit::MatchVectType match: *matches) {
             if (match.size() >= 2) {
                 found = true;
 

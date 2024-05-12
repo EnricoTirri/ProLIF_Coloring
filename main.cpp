@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[]) {
     /* Get molecule file path */
-    if(argc != 2){
+    if (argc != 2) {
         std::cout << "Usage:\tProLIF_coloring <molecule_path>" << std::endl;
         return 1;
     }
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     std::filesystem::create_directory("./outs/");
 
     /* Read molecule file and generate molecule mesh */
-    RDKit::ROMol* molecule = RDKit::PDBFileToMol(molPath, true, false);
+    RDKit::ROMol *molecule = RDKit::PDBFileToMol(molPath, true, false);
 
     MoleculeMesh *moleculeMesh = Discretizer::discretize(*molecule, 5);
 
@@ -30,11 +30,11 @@ int main(int argc, char *argv[]) {
     std::cout << "Generated discrete molecule file -> " << discrMoleculePath << std::endl;
 
     /* Retrive interaction list */
-    std::vector<std::pair<std::string,Interaction *>> interactions = InteractionCollection::buildList();
+    std::vector<std::pair<std::string, Interaction *>> interactions = InteractionCollection::buildList();
 
     /* Iterate over interaction list */
-    for(const std::pair<std::string,Interaction *>& interaction : interactions){
-        Interaction * inter = interaction.second;
+    for (const std::pair<std::string, Interaction *> &interaction: interactions) {
+        Interaction *inter = interaction.second;
         std::string desc = interaction.first;
 
         /* Generate a support-mesh for interaction as large as molecule one */
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
                                      moleculeMesh->globalDisplacement, moleculeMesh->internalDisplacement);
 
         /* If interaction mesh generation has succeeded */
-        if(inter->getInteraction(molecule, interactionMesh)){
+        if (inter->getInteraction(molecule, interactionMesh)) {
             /* Subtract molecule-mesh from interaction-mesh */
             //interactionMesh.sub(*moleculeMesh, 0, 0, 0);
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
             RDKit::RWMol *discrInteraction = Discretizer::sintetize(interactionMesh);
 
             /* Save discrete interaction */
-            std::string interactionPath =  "./outs/" + desc + ".pdb";
+            std::string interactionPath = "./outs/" + desc + ".pdb";
             RDKit::MolToPDBFile(*discrInteraction, interactionPath);
             std::cout << "Generated discrete interaction file -> " << interactionPath << std::endl;
         }

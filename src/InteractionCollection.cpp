@@ -1,11 +1,8 @@
-//
-// Created by Enrico on 04/04/2024.
-//
 #include <InteractionCollection.hpp>
 #include <DistanceInteraction.hpp>
 
-std::vector<std::pair<std::string, Interaction*>> InteractionCollection::buildList(){
-    std::vector<std::pair<std::string, Interaction*>> interactionsList;
+std::vector<std::pair<std::string, Interaction *>> InteractionCollection::buildList() {
+    std::vector<std::pair<std::string, Interaction *>> interactionsList;
     interactionsList.push_back({"Hydrophobic", new HydrophobicInteraction()});
     interactionsList.push_back({"HBAcceptor", new HBAcceptorInteraction()});
     interactionsList.push_back({"HBDonor", new HBDonorInteraction()});

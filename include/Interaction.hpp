@@ -1,7 +1,3 @@
-//
-// Created by Enrico on 29/03/2024.
-//
-
 #ifndef INTERACTION_INTERACTION_H
 #define INTERACTION_INTERACTION_H
 
@@ -10,22 +6,22 @@
 #include <GraphMol/SmilesParse/SmilesParse.h>
 #include <GraphMol/Substruct/SubstructMatch.h>
 
-class Interaction{
+class Interaction {
 protected:
-    RDKit::ROMol* matchMol;
+    RDKit::ROMol *matchMol;
 
-    std::vector<RDKit::MatchVectType> * findMatch(const RDKit::ROMol* molecule){
+    std::vector<RDKit::MatchVectType> *findMatch(const RDKit::ROMol *molecule) {
         auto *res = new std::vector<RDKit::MatchVectType>();
         RDKit::SubstructMatch(*molecule, *matchMol, *res);
         return res;
     }
 
-    explicit Interaction(const std::string &smart){
+    explicit Interaction(const std::string &smart) {
         matchMol = RDKit::SmartsToMol(smart);
     }
 
 public:
-    virtual bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh& mask) = 0;
+    virtual bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &mask) = 0;
 };
 
 #endif //INTERACTION_INTERACTION_H
