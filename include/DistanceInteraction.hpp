@@ -6,9 +6,7 @@
 #define INTERACTION_DISTANCE_H
 
 #include <Interaction.hpp>
-#include <cstdlib>
 #include <GraphMol/GraphMol.h>
-#include <InteractionMask.hpp>
 #include <vector>
 
 
@@ -19,48 +17,65 @@ private:
 public:
     DistanceInteraction(const std::string &smart, double distance) : Interaction(smart), distance(distance) {};
 
-    std::vector<InteractionMask> getInteractions(RDKit::ROMol *molecule) override {
-        std::vector<InteractionMask> ris;
+    bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &mask) override {
 
-        //get molecule conformer and retrive matches of smart into given molecule
+        // Get molecule conformer and retrive matches of smart into given molecule
         RDKit::Conformer conformer = molecule->getConformer();
-        RDKit::MatchVectType *match = Interaction::findMatch(molecule);
+        std::vector<RDKit::MatchVectType> *matches = Interaction::findMatch(molecule);
 
-        if(!match->empty()) {
-            //get molecule match and his position
-            auto atomId = match->at(0).second;
-            auto pos = conformer.getAtomPos(atomId);
+        if (matches->empty()) return false;
 
-            //calculate mask size and centering coordinates
-            auto maskCenter = static_cast<int>(ceil(distance));
-            auto maskDim = maskCenter * 2 + 1;
-            pos.x -= maskCenter;
-            pos.y -= maskCenter;
-            pos.z -= maskCenter;
+        // Discretize mask radius and calculate mask dimension
+        int scaledMaskRadius = static_cast<int>(ceil(distance * GRAIN));
+        int maskDim = 2 * scaledMaskRadius;
 
-            //build mask
-            InteractionMask mask(maskDim, maskDim, maskDim, pos);
+        // Generate a pattern-mesh
+        MoleculeMesh bubble(maskDim, maskDim, maskDim);
 
-            double ds = distance * distance;
-            for (int z = 0; z < maskDim; ++z) {
-                int dz = z - maskCenter;
-                int z_res = dz * dz;
-                for (int y = 0; y < maskDim; ++y) {
-                    int dy = y - maskCenter;
-                    int y_res = dy * dy;
-                    for (int x = 0; x < maskDim; ++x) {
-                        int dx = x - maskCenter;
-                        int x_res = dx * dx;
-                        if (x_res + y_res + z_res <= ds)
-                            mask.at(x, y, z) = true;
-                    }
+        // Over all size of pattern-mesh assign if (point-distance <= #distance) from the center of mesh
+        double scaledDistance = distance * GRAIN;
+        double ds = scaledDistance * scaledDistance;
+        for (int z = 0; z < maskDim; ++z) {
+            int dz = z - scaledMaskRadius;
+            int z_res = dz * dz;
+            for (int y = 0; y < maskDim; ++y) {
+                int dy = y - scaledMaskRadius;
+                int y_res = dy * dy;
+                for (int x = 0; x < maskDim; ++x) {
+                    int dx = x - scaledMaskRadius;
+                    int x_res = dx * dx;
+                    if (x_res + y_res + z_res <= ds)
+                        bubble.at(x, y, z) = true;
                 }
             }
-
-            ris.push_back(mask);
         }
 
-        return ris;
+        // For each interaction-centroid apply the pattern-mesh centered at centroid onto the support-mesh
+        auto paddingDisplacement = static_cast<double>(mask.internalDisplacement - scaledMaskRadius);
+        bool found = false;
+        for (RDKit::MatchVectType match: *matches) {
+            if (!match.empty()) {
+                found = true;
+                // Get interaction match centroid position
+                auto atomId = match.at(0).second;
+                RDGeom::Point3D pos = conformer.getAtomPos(atomId);
+
+                // Find the zero-point displacement of pattern from the zero-point of support-mask
+                double px = (pos.x - mask.globalDisplacement.x) * GRAIN + paddingDisplacement;
+                double py = (pos.y - mask.globalDisplacement.y) * GRAIN + paddingDisplacement;
+                double pz = (pos.z - mask.globalDisplacement.z) * GRAIN + paddingDisplacement;
+
+                // Discretize the displacement
+                int displ_x = static_cast<int>(round(px));
+                int displ_y = static_cast<int>(round(py));
+                int displ_z = static_cast<int>(round(pz));
+
+                // Apply pattern at displacement onto support-mesh
+                mask.add(bubble, displ_x, displ_y, displ_z);
+            }
+        }
+
+        return found;
     }
 };
 

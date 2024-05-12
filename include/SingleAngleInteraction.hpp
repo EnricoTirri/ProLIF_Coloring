@@ -5,8 +5,6 @@
 #ifndef INTERACTION_ANGLE_H
 #define INTERACTION_ANGLE_H
 
-#include <cstdlib>
-#include <InteractionMask.hpp>
 #include <GraphMol/GraphMol.h>
 #include <Interaction.hpp>
 
@@ -24,61 +22,90 @@ public:
                             max_angle(angle.second),
                             distance(distance) {};
 
-    std::vector<InteractionMask> getInteractions(RDKit::ROMol *molecule) override {
-        std::vector<InteractionMask> ris;
+    bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh& mask) override {
 
-        //get molecule conformer and retrive matches of smart into given molecule
+        // Get molecule conformer and retrive matches of smart into given molecule
         RDKit::Conformer conformer = molecule->getConformer();
-        RDKit::MatchVectType *match = Interaction::findMatch(molecule);
+        std::vector<RDKit::MatchVectType> *matches = Interaction::findMatch(molecule);
 
-        if(match->size()>=2){
-            //get molecule match and his position
-            auto p1Id = match->at(0).second;
-            auto p1 = conformer.getAtomPos(p1Id);
-            auto p2Id = match->at(1).second;
-            auto p2 = conformer.getAtomPos(p2Id);
+        if(matches->empty()) return false;
 
 
-            //calculate mask size and centering coordinates
-            auto maskCenter = static_cast<int>(ceil(distance));
-            auto maskDim = maskCenter * 2 + 1;
+        bool found = false;
+        for(RDKit::MatchVectType match : *matches) {
+            if (match.size() >= 2) {
+                found = true;
 
-            //TODO distance is calculated always to p1, this should be changed on implementation choice
-            //Since distance build a sphere around the atom, mask is centered by that atom
-            RDGeom::Point3D maskPos(p1.x-maskCenter, p1.y-maskCenter, p1.z-maskCenter);
+                // Get molecule match and its centroids position
+                auto p1Id = match.at(0).second;
+                auto p1 = conformer.getAtomPos(p1Id);
+                auto p2Id = match.at(1).second;
+                auto p2 = conformer.getAtomPos(p2Id);
 
-            //build mask
-            InteractionMask mask(maskDim, maskDim, maskDim, maskPos);
+                //TODO interaction is centered always on p1, this should be changed on implementation choice
+                RDGeom::Point3D center = p1;
 
-            RDGeom::Point3D p2p1 = p2.directionVector(p1);
+                // Calculate mask size and centering coordinates
+                auto scaledMaskCenter = static_cast<int>(ceil(distance * GRAIN));
+                auto maskDim = 2 * scaledMaskCenter;
 
-            double ds = distance * distance;
-            for (int z = 0; z < maskDim; ++z) {
-                double pz = z + maskPos.z;
-                int dz = z - maskCenter;
-                int z_res = dz * dz;
-                for (int y = 0; y < maskDim; ++y) {
-                    double py = y + maskPos.y;
-                    int dy = y - maskCenter;
-                    int y_res = dy * dy;
-                    for (int x = 0; x < maskDim; ++x) {
-                        double px = x + maskPos.x;
-                        int dx = x - maskCenter;
-                        int x_res = dx * dx;
+                // Generate pattern-mesh
+                MoleculeMesh bubble(maskDim, maskDim, maskDim);
 
-                        RDGeom::Point3D l1(px, py, pz);
-                        RDGeom::Point3D p2l1 = p2.directionVector(l1);
-                        double angle = p2p1.angleTo(p2l1);
-                        if (x_res + y_res + z_res <= ds && angle >= min_angle && angle <= max_angle)
-                            mask.at(x, y, z) = true;
+                // Calculate vector p2 --> p1
+                RDGeom::Point3D p2p1 = p2.directionVector(p1);
+
+                /*
+                 * Over all size of pattern-mesh assign if:
+                 *      - (point-distance <= #distance) from the center of mesh
+                 *      - angle between l1 <-- p2 --> p1 is (#min <= #angle <= #max)
+                 */
+                double scaledDistance = distance * GRAIN;
+                double ds = scaledDistance * scaledDistance;
+                for (int z = 0; z < maskDim; ++z) {
+                    double pz = z + center.z;
+                    int dz = z - scaledMaskCenter;
+                    int z_res = dz * dz;
+                    for (int y = 0; y < maskDim; ++y) {
+                        double py = y + center.y;
+                        int dy = y - scaledMaskCenter;
+                        int y_res = dy * dy;
+                        for (int x = 0; x < maskDim; ++x) {
+                            double px = x + center.x;
+                            int dx = x - scaledMaskCenter;
+                            int x_res = dx * dx;
+
+                            // Position of l1 is calculated taking account of pattern-center position
+                            RDGeom::Point3D l1(px, py, pz);
+
+                            // Calculate vector p2 --> l1
+                            RDGeom::Point3D p2l1 = p2.directionVector(l1);
+
+                            // Calculate angle l1 <-- p2 --> p1
+                            double angle = p2p1.angleTo(p2l1);
+
+                            if (x_res + y_res + z_res <= ds && angle >= min_angle && angle <= max_angle)
+                                bubble.at(x, y, z) = true;
+                        }
                     }
                 }
+
+                // Find the zero-point displacement of pattern from the zero-point of support-mask
+                auto paddingDisplacement = static_cast<double>(mask.internalDisplacement - scaledMaskCenter);
+                double px = (center.x - mask.globalDisplacement.x) * GRAIN + paddingDisplacement;
+                double py = (center.y - mask.globalDisplacement.y) * GRAIN + paddingDisplacement;
+                double pz = (center.z - mask.globalDisplacement.z) * GRAIN + paddingDisplacement;
+
+                // Discretize the displacement
+                int displ_x = static_cast<int>(round(px));
+                int displ_y = static_cast<int>(round(py));
+                int displ_z = static_cast<int>(round(pz));
+
+                // Apply pattern at displacement onto support-mesh
+                mask.add(bubble, displ_x, displ_y, displ_z);
             }
-
-            ris.push_back(mask);
         }
-
-        return ris;
+        return found;
     }
 };
 
