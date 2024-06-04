@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-project(interaction VERSION 5.0)
+project(ProLIF_Coloring VERSION 5.0)
 enable_language(CXX)
 
 #########################################################################
@@ -22,9 +22,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # enable additional warning flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_compile_options(-Wall -Wextra -Wpedantic -Wl,-z,defs -Wl,-z,now -Wl,-z,relro)
+    add_compile_options(-Wall -Wextra -Wl,-z,defs -Wl,-z,now -Wl,-z,relro) #-Wpedantic
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Wdouble-promotion)
+    add_compile_options(-Wall -Wextra -Wshadow -Wdouble-promotion)
 endif ()
 
 # enable colored compiler output (with Ninja)
@@ -35,6 +35,20 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Ninja")
         add_compile_options(-fcolor-diagnostics)
     endif ()
 endif ()
+
+if(NOT DEFINED USECUDA)
+    set(USECUDA 0)
+endif ()
+
+# define cuda options
+if(USECUDA)
+    enable_language(CUDA)
+    add_compile_definitions(USECUDA)
+    if(NOT DEFINED CUDA_BLOCK_SIZE)
+        set(CUDA_BLOCK_SIZE 128)
+    endif ()
+    add_compile_definitions(BLOCK_SIZE=${CUDA_BLOCK_SIZE})
+endif()
 
 #########################################################################
 #### Add external dependency
@@ -56,6 +70,9 @@ file(GLOB header_files "${header_path}/*.hpp")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/src")
 file(GLOB source_files "${source_path}/*.cpp")
 
+if(USECUDA)
+    file(GLOB cuda_files "${source_path}/*.cu")
+endif ()
 
 #########################################################################
 #### Define the compilation step
@@ -63,12 +80,23 @@ file(GLOB source_files "${source_path}/*.cpp")
 
 # define the target and its properties
 add_executable(ProLIF_Coloring main.cpp ${header_files} ${source_files})
+
 set_target_properties(ProLIF_Coloring
         PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
         CXX_EXTENSIONS OFF
 )
+
+# define target properties if cuda is enabled
+if(DEFINED USECUDA)
+    target_sources(ProLIF_Coloring PUBLIC ${cuda_files})
+    set_target_properties(ProLIF_Coloring
+        PROPERTIES
+        CMAKE_CUDA_STANDARD 17
+        CUDA_SEPARABLE_COMPILATION ON
+    )
+endif ()
 
 # enable link-time optimizations
 include(CheckIPOSupported)
