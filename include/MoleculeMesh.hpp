@@ -7,8 +7,10 @@
 #define GRAIN 2
 
 class MoleculeMesh {
-private:
+public:
     typedef int data_t;
+
+private:
     std::vector<data_t> voxels;
 
 public:
@@ -29,101 +31,46 @@ public:
     MoleculeMesh(int p_dim_x, int p_dim_y, int p_dim_z) :
             MoleculeMesh(p_dim_x, p_dim_y, p_dim_z, {0, 0, 0}, 0) {}
 
+    inline size_t getDataSize(){
+        return voxels.size();
+    }
+
+    inline data_t *getData(){
+        return voxels.data();
+    }
 
     inline data_t &at(int x, int y, int z) {
-        return voxels[dim_x * (z * dim_y + y) + x];
-    };
+        return MoleculeMesh::ref(voxels.data(), x, y, z, dim_x, dim_y, dim_z);
+    }
 
+    inline static data_t &ref(MoleculeMesh::data_t *data, int x, int y, int z,
+                              const int dim_x, const int dim_y, const int dim_z) {
+        return data[dim_x * (z * dim_y + y) + x];
+    }
 
     inline void add(MoleculeMesh &addend, int displ_x, int displ_y, int displ_z) {
-        // calculate operative window
-        int sx = displ_x;
-        if (sx < 0) {
-            sx = 0;
-        }
-
-        int sy = displ_y;
-        if (sy < 0) {
-            sy = 0;
-        }
-
-        int sz = displ_z;
-        if (sz < 0) {
-            sz = 0;
-        }
-
-        int ex = dim_x;
-        if (addend.dim_x + displ_x < dim_x) {
-            ex = addend.dim_x + displ_x;
-        }
-
-        int ey = dim_y;
-        if (addend.dim_y + displ_y < dim_y) {
-            ey = addend.dim_y + displ_y;
-        }
-
-        int ez = dim_z;
-        if (addend.dim_z + displ_z < dim_z) {
-            ez = addend.dim_z + displ_z;
-        }
-
-        /* Execute operation over operative window */
-        for (int z = sz; z < ez; z++) {
-            int az = z - displ_z;
-            for (int y = sy; y < ey; y++) {
-                int ay = y - displ_y;
-                for (int x = sx; x < ex; x++) {
-                    int ax = x - displ_x;
-                    at(x, y, z) = at(x, y, z) || addend.at(ax, ay, az);
-                }
-            }
-        }
+        MoleculeMesh::addMeshes(getData(), addend.getData(),
+                                displ_x, displ_y, displ_z,
+                                dim_x, dim_y, dim_z,
+                                addend.dim_x, addend.dim_y, addend.dim_z);
     }
 
     inline void sub(MoleculeMesh &addend, int displ_x, int displ_y, int displ_z) {
-        // calculate operative window
-        int sx = displ_x;
-        if (sx < 0) {
-            sx = 0;
-        }
-
-        int sy = displ_y;
-        if (sy < 0) {
-            sy = 0;
-        }
-
-        int sz = displ_z;
-        if (sz < 0) {
-            sz = 0;
-        }
-
-        int ex = dim_x;
-        if (addend.dim_x + displ_x < dim_x) {
-            ex = addend.dim_x + displ_x;
-        }
-
-        int ey = dim_y;
-        if (addend.dim_y + displ_y < dim_y) {
-            ey = addend.dim_y + displ_y;
-        }
-
-        int ez = dim_z;
-        if (addend.dim_z + displ_z < dim_z) {
-            ez = addend.dim_z + displ_z;
-        }
-
-        /* Execute operation over operative window */
-        for (int z = sz; z < ez; z++) {
-            int az = z - displ_z;
-            for (int y = sy; y < ey; y++) {
-                int ay = y - displ_y;
-                for (int x = sx; x < ex; x++) {
-                    int ax = x - displ_x;
-                    at(x, y, z) = at(x, y, z) && !addend.at(ax, ay, az);
-                }
-            }
-        }
+        MoleculeMesh::subMeshes(getData(), addend.getData(),
+                                displ_x, displ_y, displ_z,
+                                dim_x, dim_y, dim_z,
+                                addend.dim_x, addend.dim_y, addend.dim_z);
     }
+
+    static void addMeshes(MoleculeMesh::data_t *data, MoleculeMesh::data_t *to_add,
+                          const int displ_x, const int displ_y, const int displ_z,
+                          const int data_dim_x, const int data_dim_y, const int data_dim_z,
+                          const int add_dim_x, const int add_dim_y, const int add_dim_z);
+
+    static void subMeshes(MoleculeMesh::data_t *data, MoleculeMesh::data_t *to_subtract,
+                          const int displ_x, const int displ_y, const int displ_z,
+                          const int data_dim_x, const int data_dim_y, const int data_dim_z,
+                          const int sub_dim_x, const int sub_dim_y, const int sub_dim_z);
 };
 
 #endif //INTERACTION_MOLECULEVOXEL_HPP
