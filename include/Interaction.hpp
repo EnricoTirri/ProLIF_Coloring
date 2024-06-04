@@ -21,7 +21,9 @@ protected:
     }
 
 public:
-    virtual bool getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &mask) = 0;
+    virtual bool getInteraction(const RDKit::ROMol *molecule,
+                                MoleculeMesh &interactionMask,
+                                MoleculeMesh &subtractionMask) = 0;
 };
 
 #endif //INTERACTION_INTERACTION_H

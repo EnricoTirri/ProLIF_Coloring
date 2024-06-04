@@ -42,10 +42,7 @@ int main(int argc, char *argv[]) {
                                      moleculeMesh->globalDisplacement, moleculeMesh->internalDisplacement);
 
         /* If interaction mesh generation has succeeded */
-        if (inter->getInteraction(molecule, interactionMesh)) {
-            /* Subtract molecule-mesh from interaction-mesh */
-            //interactionMesh.sub(*moleculeMesh, 0, 0, 0);
-
+        if (inter->getInteraction(molecule, interactionMesh, *moleculeMesh)) {
             /* Generate discrete molecule from interaction-mesh */
             RDKit::RWMol *discrInteraction = Discretizer::sintetize(interactionMesh);
 
