@@ -1,5 +1,5 @@
-#ifndef INTERACTION_INTERACTION_H
-#define INTERACTION_INTERACTION_H
+#ifndef PROLIF_COLORING_INTERACTION
+#define PROLIF_COLORING_INTERACTION
 
 #include <string>
 #include <MoleculeMesh.hpp>
@@ -26,4 +26,4 @@ public:
                                 MoleculeMesh &subtractionMask) = 0;
 };
 
-#endif //INTERACTION_INTERACTION_H
+#endif //PROLIF_COLORING_INTERACTION

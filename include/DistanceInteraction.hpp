@@ -1,5 +1,5 @@
-#ifndef INTERACTION_DISTANCE_H
-#define INTERACTION_DISTANCE_H
+#ifndef PROLIF_COLORING_DISTANCE_INTERACTION
+#define PROLIF_COLORING_DISTANCE_INTERACTION
 
 #include <Interaction.hpp>
 #include <GraphMol/GraphMol.h>
@@ -17,4 +17,4 @@ public:
                         MoleculeMesh &subtractionMask) override;
 };
 
-#endif //INTERACTION_DISTANCE_H
+#endif //PROLIF_COLORING_DISTANCE_INTERACTION

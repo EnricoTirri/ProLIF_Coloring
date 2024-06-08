@@ -1,5 +1,5 @@
-#ifndef INTERACTION_INTERACTIONCOLLECTION_HPP
-#define INTERACTION_INTERACTIONCOLLECTION_HPP
+#ifndef PROLIF_COLORING_INTERACTION_COLLECTION
+#define PROLIF_COLORING_INTERACTION_COLLECTION
 
 #include <vector>
 #include <string>
@@ -14,4 +14,4 @@ public:
     static std::vector<std::pair<std::string, Interaction *>> buildList();
 };
 
-#endif //INTERACTION_INTERACTIONCOLLECTION_HPP
+#endif //PROLIF_COLORING_INTERACTION_COLLECTION

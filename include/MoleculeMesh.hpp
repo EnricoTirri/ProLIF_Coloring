@@ -1,5 +1,5 @@
-#ifndef INTERACTION_MOLECULEVOXEL_HPP
-#define INTERACTION_MOLECULEVOXEL_HPP
+#ifndef PROLIF_COLORING_MESH
+#define PROLIF_COLORING_MESH
 
 #include <vector>
 #include "Geometry/point.h"
@@ -73,4 +73,4 @@ public:
                           const int sub_dim_x, const int sub_dim_y, const int sub_dim_z);
 };
 
-#endif //INTERACTION_MOLECULEVOXEL_HPP
+#endif //PROLIF_COLORING_MESH

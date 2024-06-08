@@ -1,6 +1,6 @@
 
-#ifndef INTERACTION_ANGLE_H
-#define INTERACTION_ANGLE_H
+#ifndef PROLIF_COLORING_SINGLEANGLE_INTERACTION
+#define PROLIF_COLORING_SINGLEANGLE_INTERACTION
 
 #include <GraphMol/GraphMol.h>
 #include <Interaction.hpp>
@@ -25,4 +25,4 @@ public:
                         MoleculeMesh &interactionMask, MoleculeMesh &subtractionMask) override;
 };
 
-#endif //INTERACTION_ANGLE_H
+#endif //PROLIF_COLORING_SINGLEANGLE_INTERACTION

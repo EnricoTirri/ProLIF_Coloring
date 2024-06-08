@@ -1,5 +1,5 @@
-#ifndef INTERACTION_DISCRETIZER_HPP
-#define INTERACTION_DISCRETIZER_HPP
+#ifndef PROLIF_COLORING_DISCRETIZER
+#define PROLIF_COLORING_DISCRETIZER
 
 #include "GraphMol/RWMol.h"
 #include "MoleculeMesh.hpp"
@@ -141,4 +141,4 @@ public:
     }
 };
 
-#endif //INTERACTION_DISCRETIZER_HPP
+#endif //PROLIF_COLORING_DISCRETIZER
