@@ -13,13 +13,17 @@ int main(int argc, char *argv[]) {
     }
     std::string molPath = argv[1];
 
+    timespec startTime, endTime;
+
     /* Setup directory for output files */
     std::filesystem::create_directory("./outs/");
 
     /* Read molecule file and generate molecule mesh */
     RDKit::ROMol *molecule = RDKit::PDBFileToMol(molPath, true, false);
 
+    clock_gettime(CLOCK_MONOTONIC, &startTime);
     MoleculeMesh *moleculeMesh = Discretizer::discretize(*molecule, 5);
+    clock_gettime(CLOCK_MONOTONIC, &endTime);
 
     /* Generate discrete molecule from molecule-mesh */
     RDKit::RWMol *discrMolecule = Discretizer::sintetize(*moleculeMesh);
@@ -27,7 +31,10 @@ int main(int argc, char *argv[]) {
     /* Save discrete molecule */
     std::string discrMoleculePath = "./outs/Molecule.pdb";
     RDKit::MolToPDBFile(*discrMolecule, discrMoleculePath);
-    std::cout << "Generated discrete molecule file -> " << discrMoleculePath << std::endl;
+
+    auto elapsed = static_cast<double>((endTime.tv_sec - startTime.tv_sec));
+    elapsed += static_cast<double>((endTime.tv_nsec - startTime.tv_nsec)) / 1000000000.0;
+    std::cout << "Generated discrete molecule file -> " << discrMoleculePath << "\t: " << elapsed << std::endl;
 
     /* Retrive interaction list */
     std::vector<std::pair<std::string, Interaction *>> interactions = InteractionCollection::buildList();
@@ -41,15 +48,23 @@ int main(int argc, char *argv[]) {
         MoleculeMesh interactionMesh(moleculeMesh->dim_x, moleculeMesh->dim_y, moleculeMesh->dim_z,
                                      moleculeMesh->globalDisplacement, moleculeMesh->internalDisplacement);
 
+        clock_gettime(CLOCK_MONOTONIC, &startTime);
+        bool succeed = inter->getInteraction(molecule, interactionMesh, *moleculeMesh);
+        clock_gettime(CLOCK_MONOTONIC, &endTime);
+
+
         /* If interaction mesh generation has succeeded */
-        if (inter->getInteraction(molecule, interactionMesh, *moleculeMesh)) {
+        if (succeed) {
+            auto elapsed = static_cast<double>((endTime.tv_sec - startTime.tv_sec));
+            elapsed += static_cast<double>((endTime.tv_nsec - startTime.tv_nsec)) / 1000000000.0;
+
             /* Generate discrete molecule from interaction-mesh */
             RDKit::RWMol *discrInteraction = Discretizer::sintetize(interactionMesh);
 
             /* Save discrete interaction */
             std::string interactionPath = "./outs/" + desc + ".pdb";
             RDKit::MolToPDBFile(*discrInteraction, interactionPath);
-            std::cout << "Generated discrete interaction file -> " << interactionPath << std::endl;
+            std::cout << "Generated discrete interaction file -> " << interactionPath << "\t: " << elapsed << std::endl;
         }
     }
 
