@@ -49,11 +49,11 @@ $ make
 * `-D CUDA_BLOCK_SIZE=_size_block_` - specify the size of cuda-thread-block to be used
 * `-D USEOMP=1/0'` - specify if to use cpu base, openmp implementation of interactions
 * `-D OMP_NUM_THREADS=_num_threads_` - specify the number of threads used by omp implementation
-* 
+
 ### How to run
 
 ```bash
 $ ./ProLIF_Coloring input.pdb
 ```
 where:
-* `input.vtk` - is a path/filename to .pdb input molecule file
+* `input.pdb` - is a path/filename to .pdb input molecule file
