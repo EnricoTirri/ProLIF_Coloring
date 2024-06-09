@@ -1,5 +1,5 @@
 
-#include "MoleculeMesh.hpp"
+#include "Mesh.hpp"
 
 __global__
 void addMask_ker(MoleculeMesh::data_t *data, const MoleculeMesh::data_t *to_add,

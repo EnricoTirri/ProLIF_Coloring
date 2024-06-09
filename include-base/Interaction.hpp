@@ -2,7 +2,7 @@
 #define PROLIF_COLORING_INTERACTION
 
 #include <string>
-#include <MoleculeMesh.hpp>
+#include <Mesh.hpp>
 #include <GraphMol/SmilesParse/SmilesParse.h>
 #include <GraphMol/Substruct/SubstructMatch.h>
 

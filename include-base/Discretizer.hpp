@@ -2,7 +2,7 @@
 #define PROLIF_COLORING_DISCRETIZER
 
 #include "GraphMol/RWMol.h"
-#include "MoleculeMesh.hpp"
+#include "Mesh.hpp"
 
 class Discretizer {
 

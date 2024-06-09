@@ -1,5 +1,5 @@
 
-#include "MoleculeMesh.hpp"
+#include "Mesh.hpp"
 
 void MoleculeMesh::subMeshes(MoleculeMesh::data_t *data, MoleculeMesh::data_t *to_subtract,
                              const int displ_x, const int displ_y, const int displ_z,

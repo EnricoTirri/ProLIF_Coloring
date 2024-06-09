@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include "GraphMol/FileParsers/FileParsers.h"
-#include "MoleculeMesh.hpp"
+#include "Mesh.hpp"
 #include "Discretizer.hpp"
 #include "InteractionCollection.hpp"
 
