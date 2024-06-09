@@ -31,11 +31,11 @@ public:
     MoleculeMesh(int p_dim_x, int p_dim_y, int p_dim_z) :
             MoleculeMesh(p_dim_x, p_dim_y, p_dim_z, {0, 0, 0}, 0) {}
 
-    inline size_t getDataSize(){
+    inline size_t getDataSize() {
         return voxels.size();
     }
 
-    inline data_t *getData(){
+    inline data_t *getData() {
         return voxels.data();
     }
 
@@ -44,7 +44,7 @@ public:
     }
 
     inline static data_t &ref(MoleculeMesh::data_t *data, int x, int y, int z,
-                              const int dim_x, const int dim_y, const int dim_z) {
+                              const int dim_x, const int dim_y, const int /*dim_z*/) {
         return data[dim_x * (z * dim_y + y) + x];
     }
 
@@ -63,14 +63,14 @@ public:
     }
 
     static void addMeshes(MoleculeMesh::data_t *data, MoleculeMesh::data_t *to_add,
-                          const int displ_x, const int displ_y, const int displ_z,
-                          const int data_dim_x, const int data_dim_y, const int data_dim_z,
-                          const int add_dim_x, const int add_dim_y, const int add_dim_z);
+                          int displ_x, int displ_y, int displ_z,
+                          int data_dim_x, int data_dim_y, int data_dim_z,
+                          int add_dim_x, int add_dim_y, int add_dim_z);
 
     static void subMeshes(MoleculeMesh::data_t *data, MoleculeMesh::data_t *to_subtract,
-                          const int displ_x, const int displ_y, const int displ_z,
-                          const int data_dim_x, const int data_dim_y, const int data_dim_z,
-                          const int sub_dim_x, const int sub_dim_y, const int sub_dim_z);
+                          int displ_x, int displ_y, int displ_z,
+                          int data_dim_x, int data_dim_y, int data_dim_z,
+                          int sub_dim_x, int sub_dim_y, int sub_dim_z);
 };
 
 #endif //PROLIF_COLORING_MESH

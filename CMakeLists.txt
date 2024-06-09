@@ -36,19 +36,13 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Ninja")
     endif ()
 endif ()
 
-if(NOT DEFINED USECUDA)
+if (NOT DEFINED USECUDA)
     set(USECUDA 0)
 endif ()
 
-# define cuda options
-if(USECUDA)
-    enable_language(CUDA)
-    add_compile_definitions(USECUDA)
-    if(NOT DEFINED CUDA_BLOCK_SIZE)
-        set(CUDA_BLOCK_SIZE 128)
-    endif ()
-    add_compile_definitions(BLOCK_SIZE=${CUDA_BLOCK_SIZE})
-endif()
+if (NOT DEFINED USEOMP)
+    set(USEOPM 0)
+endif ()
 
 #########################################################################
 #### Add external dependency
@@ -56,6 +50,25 @@ endif()
 
 # the rdkit to perform the heavy lifting
 find_package(rdkit REQUIRED)
+
+if (USEOMP)
+    find_package(OpenMP REQUIRED)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+    if (NOT DEFINED OMP_THREADS)
+        set(OMP_THREADS 8)
+    endif ()
+    add_compile_definitions(OMP_NUM_THREADS=${OMP_THREADS})
+endif ()
+
+# define cuda options
+if (USECUDA)
+    enable_language(CUDA)
+    if (NOT DEFINED CUDA_BLOCK_SIZE)
+        set(CUDA_BLOCK_SIZE 128)
+    endif ()
+    add_compile_definitions(BLOCK_SIZE=${CUDA_BLOCK_SIZE})
+endif ()
+
 
 #########################################################################
 #### Define the application sources
@@ -70,8 +83,13 @@ file(GLOB header_files "${header_path}/*.hpp")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/src")
 file(GLOB source_files "${source_path}/*.cpp")
 
-if(USECUDA)
-    file(GLOB cuda_files "${source_path}/*.cu")
+
+if (USECUDA)
+    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src_cuda/*.cu")
+elseif (USEOMP)
+    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src_omp/*.cpp")
+else ()
+    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src_normal/*.cpp")
 endif ()
 
 #########################################################################
@@ -79,7 +97,7 @@ endif ()
 #########################################################################
 
 # define the target and its properties
-add_executable(ProLIF_Coloring main.cpp ${header_files} ${source_files})
+add_executable(ProLIF_Coloring main.cpp ${header_files} ${source_files} ${impl_files})
 
 set_target_properties(ProLIF_Coloring
         PROPERTIES
@@ -89,12 +107,11 @@ set_target_properties(ProLIF_Coloring
 )
 
 # define target properties if cuda is enabled
-if(DEFINED USECUDA)
-    target_sources(ProLIF_Coloring PUBLIC ${cuda_files})
+if (USECUDA)
     set_target_properties(ProLIF_Coloring
-        PROPERTIES
-        CMAKE_CUDA_STANDARD 17
-        CUDA_SEPARABLE_COMPILATION ON
+            PROPERTIES
+            CMAKE_CUDA_STANDARD 17
+            CUDA_SEPARABLE_COMPILATION ON
     )
 endif ()
 
