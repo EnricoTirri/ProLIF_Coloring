@@ -44,6 +44,11 @@ if (NOT DEFINED USEOMP)
     set(USEOPM 0)
 endif ()
 
+if(USECUDA AND USEOMP)
+    message(FATAL_ERROR "You cannot build with both UseCuda and UseOpenMP")
+endif ()
+
+
 #########################################################################
 #### Add external dependency
 #########################################################################
