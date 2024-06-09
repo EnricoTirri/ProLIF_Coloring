@@ -4,10 +4,10 @@
 #include <vector>
 #include <string>
 #include <Interaction.hpp>
-#include <HydrophobicInteraction.hpp>
-#include <HBInteraction.hpp>
-#include <IonicInteraction.hpp>
-#include <MetalInteraction.hpp>
+#include "HydrophobicInteraction.hpp"
+#include "HBInteraction.hpp"
+#include "IonicInteraction.hpp"
+#include "MetalInteraction.hpp"
 
 class InteractionCollection {
 public:

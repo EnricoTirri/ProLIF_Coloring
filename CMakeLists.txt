@@ -75,9 +75,14 @@ endif ()
 #########################################################################
 
 # application headers
-set(header_path "${CMAKE_CURRENT_SOURCE_DIR}/include")
-include_directories(${header_path})
-file(GLOB header_files "${header_path}/*.hpp")
+set(base_header_path "${CMAKE_CURRENT_SOURCE_DIR}/include-base")
+set(extended_header_path "${CMAKE_CURRENT_SOURCE_DIR}/include-extended")
+
+file(GLOB base_header_files "${base_header_path}/*.hpp")
+file(GLOB extended_header_files "${extended_header_path}/*.hpp")
+
+include_directories(${base_header_path})
+include_directories(${extended_header_path})
 
 # application sources
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/src")
@@ -85,11 +90,11 @@ file(GLOB source_files "${source_path}/*.cpp")
 
 
 if (USECUDA)
-    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src_cuda/*.cu")
+    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src-cuda/*.cu")
 elseif (USEOMP)
-    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src_omp/*.cpp")
+    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src-omp/*.cpp")
 else ()
-    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src_normal/*.cpp")
+    file(GLOB impl_files "${CMAKE_CURRENT_SOURCE_DIR}/src-normal/*.cpp")
 endif ()
 
 #########################################################################
@@ -97,7 +102,7 @@ endif ()
 #########################################################################
 
 # define the target and its properties
-add_executable(ProLIF_Coloring main.cpp ${header_files} ${source_files} ${impl_files})
+add_executable(ProLIF_Coloring main.cpp ${base_header_files} ${extended_header_files} ${source_files} ${impl_files})
 
 set_target_properties(ProLIF_Coloring
         PROPERTIES
@@ -123,7 +128,7 @@ if (ipo_supported)
 endif ()
 
 # since RDKit doesn't handle the dependencies in a correct way, we need to improvise
-# NOTE: by using this way of importing RDKit, we need to manually include its dependencies
+# NOTE: by using this way of importing RDKit, we need to manually include-base its dependencies
 get_target_property(RDKIT_LIB_FULLPATH RDKit::RDGeneral LOCATION)
 get_filename_component(RDKIT_LIB_DIRPATH "${RDKIT_LIB_FULLPATH}" DIRECTORY)
 cmake_path(GET RDKIT_LIB_DIRPATH PARENT_PATH RDKIT_INSTALL_PREFIX)

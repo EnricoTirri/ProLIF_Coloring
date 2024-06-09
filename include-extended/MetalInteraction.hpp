@@ -1,7 +1,7 @@
 #ifndef PROLIF_COLORING_METAL_INTERACTION
 #define PROLIF_COLORING_METAL_INTERACTION
 
-#include <DistanceInteraction.hpp>
+#include "DistanceInteraction.hpp"
 
 class MetalAcceptorInteraction : public DistanceInteraction {
 public:

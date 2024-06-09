@@ -1,7 +1,7 @@
 #ifndef PROLIF_COLORING_HYDRO_INTERACTION
 #define PROLIF_COLORING_HYDRO_INTERACTION
 
-#include <DistanceInteraction.hpp>
+#include "DistanceInteraction.hpp"
 
 class HydrophobicInteraction : public DistanceInteraction {
 public:

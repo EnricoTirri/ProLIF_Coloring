@@ -1,7 +1,7 @@
 #ifndef PROLIF_COLORING_IONIC_INTERACTION
 #define PROLIF_COLORING_IONIC_INTERACTION
 
-#include <DistanceInteraction.hpp>
+#include "DistanceInteraction.hpp"
 
 class CationicInteraction : public DistanceInteraction {
 public:

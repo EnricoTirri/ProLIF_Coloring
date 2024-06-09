@@ -1,7 +1,7 @@
 #ifndef PROLIF_COLORING_HB_INTERACTION
 #define PROLIF_COLORING_HB_INTERACTION
 
-#include <SingleAngleInteraction.hpp>
+#include "SingleAngleInteraction.hpp"
 
 class HBDonorInteraction : public SingleAngleInteraction {
 public:
