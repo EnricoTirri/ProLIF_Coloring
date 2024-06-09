@@ -57,3 +57,9 @@ $ ./ProLIF_Coloring input.pdb
 ```
 where:
 * `input.pdb` - is a path/filename to .pdb input molecule file
+
+### Showcase
+
+| ![Molecule](showcase/mol.gif)                  | ![DiscreteMolecule](showcase/dicr_mol.gif) |
+|------------------------------------------------|--------------------------------------------|
+| ![HydrofobicInteraction](showcase/hyd_int.gif) |                                            |
