@@ -12,8 +12,8 @@ private:
 public:
     SingleAngleInteraction(const std::string &smart,
                            std::pair<double, double> angle,
-                           const int centerPoint,
-                           double distance) : Interaction(smart),
+                           double distance,
+                           const int centerPoint) : Interaction(smart),
                                               min_angle(angle.first),
                                               max_angle(angle.second),
                                               distance(distance) {
