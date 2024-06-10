@@ -44,17 +44,17 @@ bool SingleAngleInteraction::getInteraction(const RDKit::ROMol *molecule,
             double scaledDistance = distance * GRAIN;
             double ds = scaledDistance * scaledDistance;
             for (int z = 0; z < maskDim; ++z) {
-                double pz = z + center.z;
                 int dz = z - scaledMaskCenter;
                 int z_res = dz * dz;
+                double pz = static_cast<double>(dz) / GRAIN + center.z;
                 for (int y = 0; y < maskDim; ++y) {
-                    double py = y + center.y;
                     int dy = y - scaledMaskCenter;
                     int y_res = dy * dy;
+                    double py = static_cast<double>(dy) / GRAIN + center.y;
                     for (int x = 0; x < maskDim; ++x) {
-                        double px = x + center.x;
                         int dx = x - scaledMaskCenter;
                         int x_res = dx * dx;
+                        double px = static_cast<double>(dx) / GRAIN + center.x;
 
                         // Position of l1 is calculated taking account of pattern-center position
                         RDGeom::Point3D l1(px, py, pz);
