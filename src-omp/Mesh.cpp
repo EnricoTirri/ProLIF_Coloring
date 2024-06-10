@@ -84,7 +84,7 @@ void MoleculeMesh::addMeshes(MoleculeMesh::data_t *data, MoleculeMesh::data_t *t
     }
 
     int ez = data_dim_z;
-    if (add_dim_z + displ_z < add_dim_z) {
+    if (add_dim_z + displ_z < data_dim_z) {
         ez = add_dim_z + displ_z;
     }
 
