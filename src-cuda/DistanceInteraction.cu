@@ -95,7 +95,7 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
             }
         }
 
-        if (!subtractionMask.getDataSize()!=0) {
+        if (subtractionMask.getDataSize()!=0) {
             err = cudaMalloc((void **) &subtraction_data, sizeof(MoleculeMesh::data_t) * subtractionMask.getDataSize());
             if (err != cudaSuccess) throw;
 

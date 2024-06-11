@@ -57,12 +57,14 @@ void subMask_ker(MoleculeMesh::data_t *data, const MoleculeMesh::data_t *to_subt
         const int data_y = (thr_id % data_layer_size) / data_dim_y;
         const int data_x = (thr_id % data_layer_size) % data_dim_y;
 
-        const int sub_z = data_z + displ_z;
-        const int sub_y = data_y + displ_y;
-        const int sub_x = data_x + displ_x;
+        const int sub_z = data_z - displ_z;
+        const int sub_y = data_y - displ_y;
+        const int sub_x = data_x - displ_x;
 
         if (sub_z >= 0 && sub_y >= 0 && sub_x >= 0 && sub_z < sub_dim_z && sub_y < sub_dim_y && sub_x < sub_dim_x) {
-            data[thr_id] = data[thr_id] && !to_subtract[sub_dim_x * (sub_z * sub_dim_y + sub_y) + sub_x];
+            const int data_id = data_dim_x * (data_z * data_dim_y + data_y) + data_x;
+            const int sub_id = sub_dim_x * (sub_z * sub_dim_y + sub_y) + sub_x;
+            data[data_id] = data[data_id] && !to_subtract[sub_id];
         }
     }
 }
