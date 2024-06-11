@@ -5,7 +5,7 @@
 #include "Geometry/point.h"
 
 #ifndef GRAIN
-#define GRAIN 20
+#define GRAIN 3
 #endif
 
 /**

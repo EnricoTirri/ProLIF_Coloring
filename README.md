@@ -59,6 +59,11 @@ $ make
 * `-D CUDA_BLOCK_SIZE=_size_block_` - specify the size of cuda-thread-block to be used
 * `-D USEOMP=1/0'` - specify if to use cpu base, openmp implementation of interactions
 * `-D OMP_NUM_THREADS=_num_threads_` - specify the number of threads used by omp implementation
+* `-D GRAINING=_voxel_density_per_armstrong_unity_` - specify the number of voxel used to describe a point in space (**)
+
+(**)
+Note that actual grow rate of voxel used is not linear, but cubic, this can cause significant drop in performance and will produce very large output file.
+I suggest to use Graining not bigger than 20. \[Default is 3\]
 
 ### How to run
 
