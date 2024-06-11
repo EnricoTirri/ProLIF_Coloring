@@ -4,7 +4,9 @@
 #include <vector>
 #include "Geometry/point.h"
 
-#define GRAIN 2
+#ifndef GRAIN
+#define GRAIN 20
+#endif
 
 class MoleculeMesh {
 public:

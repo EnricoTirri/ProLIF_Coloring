@@ -48,6 +48,10 @@ if(USECUDA AND USEOMP)
     message(FATAL_ERROR "You cannot build with both UseCuda and UseOpenMP")
 endif ()
 
+if(DEFINED GRAINING)
+    add_compile_definitions(GRAIN=${GRAINING})
+endif ()
+
 
 #########################################################################
 #### Add external dependency
