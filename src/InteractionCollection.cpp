@@ -1,5 +1,8 @@
-#include <InteractionCollection.hpp>
-#include <DistanceInteraction.hpp>
+#include "InteractionCollection.hpp"
+#include "HydrophobicInteraction.hpp"
+#include "HBInteraction.hpp"
+#include "IonicInteraction.hpp"
+#include "MetalInteraction.hpp"
 
 std::vector<std::pair<std::string, Interaction *>> InteractionCollection::buildList() {
     std::vector<std::pair<std::string, Interaction *>> interactionsList;

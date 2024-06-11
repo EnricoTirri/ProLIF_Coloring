@@ -1,6 +1,6 @@
 
 #include "DistanceInteraction.hpp"
-#include "omp.h"
+#include <vector>
 
 bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &interactionMask,
                                           MoleculeMesh &subtractionMask) {

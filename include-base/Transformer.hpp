@@ -4,16 +4,34 @@
 #include "GraphMol/RWMol.h"
 #include "Mesh.hpp"
 
-class Discretizer {
+/**
+ * This class allow the transformation from the continuous space of RDKit-molecule
+ * definition to the discrete space of MoleculeMesh class and vice-versa
+ */
+class Transformer {
 
+    /**
+     * Standard atom radius used in transformation
+     */
     static constexpr double atomRadius = 1.1;
+    /**
+     * Minimum padding applied to MoleculeMesh boundary
+     */
     static constexpr int minPadding = 2;
 
 public:
+    /**
+     * This function allow the transformation from the RDKit-molecule to MoleculeMesh
+     * @param molecule The RDKit-molecule to get discrete definition
+     * @param padding The padding to add to discrete definition
+     * @return The discrete definition of the input molecule
+     */
     static MoleculeMesh *discretize(const RDKit::ROMol &molecule, int padding = minPadding) {
 
+        /* Padding less than the minimum one is not allowed */
         if (padding < minPadding) padding = minPadding;
 
+        /* Retrieve all atom position of input molecule */
         std::vector<RDGeom::Point3D> atoms = molecule.getConformer().getPositions();
 
         /* Find min and max of the span of molecule */
@@ -110,6 +128,12 @@ public:
         return mesh;
     }
 
+
+    /**
+     * This function allow the transformation from the MoleculeMesh to RDKit-molecule
+     * @param mesh The RDKit-molecule to get continuous definition
+     * @return The continuous definition of the input molecule
+     */
     static RDKit::RWMol *sintetize(MoleculeMesh &mesh) {
         /* Generate a new molecule and assign a conformer for atoms position */
         auto *molecule = new RDKit::RWMol();

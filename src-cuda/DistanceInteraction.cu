@@ -1,7 +1,6 @@
 
-#include <GraphMol/FileParsers/FileParsers.h>
 #include "DistanceInteraction.hpp"
-#include "Discretizer.hpp"
+#include <vector>
 
 __global__
 void buildBubble_ker(MoleculeMesh::data_t *bubble, const double inter_d, const int maskEdge) {

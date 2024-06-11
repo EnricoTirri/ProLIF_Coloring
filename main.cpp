@@ -2,7 +2,7 @@
 #include <filesystem>
 #include "GraphMol/FileParsers/FileParsers.h"
 #include "Mesh.hpp"
-#include "Discretizer.hpp"
+#include "Transformer.hpp"
 #include "InteractionCollection.hpp"
 
 int main(int argc, char *argv[]) {
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Discretizing molecule" << std::endl;
     clock_gettime(CLOCK_MONOTONIC, &startTime);
-    MoleculeMesh *moleculeMesh = Discretizer::discretize(*molecule, 5);
+    MoleculeMesh *moleculeMesh = Transformer::discretize(*molecule, 5);
     clock_gettime(CLOCK_MONOTONIC, &endTime);
 
     auto elapsed = static_cast<double>((endTime.tv_sec - startTime.tv_sec));
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
 
     /* Generate discrete molecule from molecule-mesh */
-    RDKit::RWMol *discrMolecule = Discretizer::sintetize(*moleculeMesh);
+    RDKit::RWMol *discrMolecule = Transformer::sintetize(*moleculeMesh);
 
     /* Save discrete molecule */
     std::string discrMoleculePath = "./outs/Molecule.pdb";
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
             std::cout << "\t-> elapsed time : " << elapsed << std::endl;
 
             /* Generate discrete molecule from interaction-mesh */
-            RDKit::RWMol *discrInteraction = Discretizer::sintetize(interactionMesh);
+            RDKit::RWMol *discrInteraction = Transformer::sintetize(interactionMesh);
 
             /* Save discrete interaction */
             std::string interactionPath = "./outs/" + desc + ".pdb";

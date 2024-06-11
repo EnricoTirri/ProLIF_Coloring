@@ -1,7 +1,6 @@
 
-#include <GraphMol/FileParsers/FileParsers.h>
 #include "DistanceInteraction.hpp"
-#include "Discretizer.hpp"
+#include <vector>
 
 bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &interactionMask,
                                           MoleculeMesh &subtractionMask) {
