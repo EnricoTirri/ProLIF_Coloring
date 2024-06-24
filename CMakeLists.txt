@@ -44,6 +44,10 @@ if (NOT DEFINED USEOMP)
     set(USEOPM 0)
 endif ()
 
+if (NOT DEFINED USEPATTERN)
+    set(USEPATTERN 0)
+endif ()
+
 if(USECUDA AND USEOMP)
     message(FATAL_ERROR "You cannot build with both UseCuda and UseOpenMP")
 endif ()
@@ -52,6 +56,7 @@ if(DEFINED GRAINING)
     add_compile_definitions(GRAIN=${GRAINING})
 endif ()
 
+add_compile_options(-fno-omit-frame-pointer -O0)
 
 #########################################################################
 #### Add external dependency
@@ -110,8 +115,12 @@ endif ()
 #### Define the compilation step
 #########################################################################
 
+add_compile_definitions(USECUDA=${USECUDA})
+add_compile_definitions(USEOMP=${USEOMP})
+add_compile_definitions(USEPATTERN=${USEPATTERN})
+
 # define the target and its properties
-add_executable(ProLIF_Coloring main.cpp ${base_header_files} ${extended_header_files} ${source_files} ${impl_files})
+add_executable(ProLIF_Coloring test.cpp ${base_header_files} ${extended_header_files} ${source_files} ${impl_files})
 
 set_target_properties(ProLIF_Coloring
         PROPERTIES

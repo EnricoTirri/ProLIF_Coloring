@@ -3,6 +3,8 @@
 #include "DistanceInteraction.hpp"
 #include "Discretizer.hpp"
 
+#if USEPATTERN
+
 bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &interactionMask,
                                           MoleculeMesh &subtractionMask) {
     // Get molecule conformer and retrive matches of smart into given molecule
@@ -61,7 +63,8 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
         }
     }
 
-    interactionMask.sub(subtractionMask, 0,0,0);
+    //interactionMask.sub(subtractionMask, 0,0,0);
 
     return found;
 }
+#endif
