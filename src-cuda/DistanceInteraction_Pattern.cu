@@ -3,6 +3,8 @@
 #include "DistanceInteraction.hpp"
 #include "Discretizer.hpp"
 
+#if USEPATTERN
+
 __global__
 void buildBubble_ker(MoleculeMesh::data_t *bubble, const double inter_d, const int maskEdge) {
     int thr_id = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
@@ -30,11 +32,10 @@ void buildBubble_ker(MoleculeMesh::data_t *bubble, const double inter_d, const i
 
 
 bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &interactionMask,
-                                         MoleculeMesh &subtractionMask) {
+                                         MoleculeMesh &/*subtractionMask*/) {
     cudaError_t err;
     MoleculeMesh::data_t *bubble_data = nullptr;
     MoleculeMesh::data_t *interaction_data = nullptr;
-    MoleculeMesh::data_t *subtraction_data = nullptr;
     bool ris = false;
 
     try {
@@ -95,23 +96,6 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
             }
         }
 
-        if (subtractionMask.getDataSize()!=0) {
-            err = cudaMalloc((void **) &subtraction_data, sizeof(MoleculeMesh::data_t) * subtractionMask.getDataSize());
-            if (err != cudaSuccess) throw;
-
-            err = cudaMemcpy(subtraction_data, subtractionMask.getData(),
-                             sizeof(MoleculeMesh::data_t) * subtractionMask.getDataSize(), cudaMemcpyHostToDevice);
-            if (err != cudaSuccess) throw;
-
-            MoleculeMesh::subMeshes(interaction_data, subtraction_data,
-                                    0, 0, 0,
-                                    interactionMask.dim_x, interactionMask.dim_y, interactionMask.dim_z,
-                                    subtractionMask.dim_x, subtractionMask.dim_y, subtractionMask.dim_z);
-            err = cudaGetLastError();
-            if (err != cudaSuccess) throw;
-        }
-
-
         err = cudaMemcpy(interactionMask.getData(), interaction_data,
                          sizeof(MoleculeMesh::data_t) * interactionMask.getDataSize(), cudaMemcpyDeviceToHost);
         if(err != cudaSuccess) throw;
@@ -123,7 +107,8 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
 
     if(bubble_data != nullptr) cudaFree(bubble_data);
     if(interaction_data != nullptr) cudaFree(interaction_data);
-    if(subtraction_data != nullptr) cudaFree(subtraction_data);
 
     return ris;
 }
+
+#endif

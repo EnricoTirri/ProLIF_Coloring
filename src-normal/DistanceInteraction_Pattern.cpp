@@ -38,9 +38,12 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
         }
     }
 
+
     // For each interaction-centroid apply the pattern-mesh centered at centroid onto the support-mesh
     auto paddingDisplacement = static_cast<double>(interactionMask.internalDisplacement - scaledMaskRadius);
     bool found = false;
+
+
     for (RDKit::MatchVectType match: *matches) {
         if (!match.empty()) {
             found = true;
@@ -62,8 +65,6 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
             interactionMask.add(bubble, displ_x, displ_y, displ_z);
         }
     }
-
-    //interactionMask.sub(subtractionMask, 0,0,0);
 
     return found;
 }

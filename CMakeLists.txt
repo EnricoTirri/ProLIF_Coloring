@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(ProLIF_Coloring VERSION 5.0)
 enable_language(CXX)
 
+set(CMAKE_MODULE_PATH "/usr/share/cmake/Modules/")
+
 #########################################################################
 #### Tweak the default configuration
 #########################################################################
@@ -36,12 +38,18 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Ninja")
     endif ()
 endif ()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+
 if (NOT DEFINED USECUDA)
     set(USECUDA 0)
 endif ()
 
 if (NOT DEFINED USEOMP)
-    set(USEOPM 0)
+    set(USEOMP 0)
+endif ()
+
+if (NOT DEFINED MP)
+    set(MP 0)
 endif ()
 
 if (NOT DEFINED USEPATTERN)
@@ -77,8 +85,9 @@ endif ()
 # define cuda options
 if (USECUDA)
     enable_language(CUDA)
+    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -O3")
     if (NOT DEFINED CUDA_BLOCK_SIZE)
-        set(CUDA_BLOCK_SIZE 128)
+        set(CUDA_BLOCK_SIZE 512)
     endif ()
     add_compile_definitions(BLOCK_SIZE=${CUDA_BLOCK_SIZE})
 endif ()
@@ -118,6 +127,7 @@ endif ()
 add_compile_definitions(USECUDA=${USECUDA})
 add_compile_definitions(USEOMP=${USEOMP})
 add_compile_definitions(USEPATTERN=${USEPATTERN})
+add_compile_definitions(MP=${MP})
 
 # define the target and its properties
 add_executable(ProLIF_Coloring test.cpp ${base_header_files} ${extended_header_files} ${source_files} ${impl_files})

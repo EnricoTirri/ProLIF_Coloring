@@ -1,12 +1,10 @@
 
 #include "DistanceInteraction.hpp"
-#include "omp.h"
 
 #if USEPATTERN
 
-#define V1 0
+#if !MP
 
-#if V1
 bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &interactionMask,
                                           MoleculeMesh &subtractionMask) {
     // Get molecule conformer and retrive matches of smart into given molecule
@@ -75,13 +73,11 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
         }
     }
 
-    //interactionMask.sub(subtractionMask, 0, 0, 0);
-
     return found;
 }
 #endif
 
-#if !V1
+#if MP
 
 bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeMesh &interactionMask,
                                          MoleculeMesh &subtractionMask) {
@@ -199,8 +195,6 @@ bool DistanceInteraction::getInteraction(const RDKit::ROMol *molecule, MoleculeM
             }
         }
     }
-
-    //interactionMask.sub(subtractionMask, 0, 0, 0);
 
     return found;
 }
